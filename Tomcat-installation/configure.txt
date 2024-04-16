@@ -1,4 +1,46 @@
 #2. Start of tomcat configuration 
+Change the default portNumber for tomcat from 8080 to 8088 
+ 1. [ec2-user@tomcat ~]$ vim /opt/tomcat9/conf/server.xml
+
+2 restart tomcat  :
+     stoptomcat && starttomcat:   if u have created your symbolic link, use this.
+     or 
+     sh /opt/tomcat9/bin/catalina.sh stop  
+     sh /opt/tomcat9/bin/catalina.sh start  
+     or  
+     sh /opt/tomcat9/bin/shutdown.sh  
+     sh /opt/tomcat9/bin/startup.sh  
+
+3  Enable external tomcat mgt access
+
+     By default tomcat can only be managed from localhost
+     [ec2-user@tomcat ~]$ vim /opt/tomcat9/webapps/manager/META-INF/context.xml
+
+     vim /opt/tomcat9/webapps/manager/META-INF/context.xml
+from:
+  <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+          allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /
+to:
+<!--
+  <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+          allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /
+-->
+
+4. create tomcat users with access roles  :
+vim /opt/tomcat9/conf/tomcat-users.xml  =# to add user
+vi /opt/tomcat9/conf/tomcat-users.xml
+
+<user username="landmark" password="admin123" roles="manager-gui,admin-gui,manager-script"/>
+<user username="simon" password="admin123" roles="admin-gui"/> 
+simon cannot manage the application running in tomcat, but landmark can becos he 
+has manager-script role'
+
+5 Deploy tesla.war from maven into webapps in tomacat. PriIP for tomcat used below:
+scp -i mavenkey1.pem tesla.war ec2-user@54.158.7.189:/opt/tomcat9/webapps/ 
+   b4 passing above command vi mavenkey1.pem and add its content- using maven comand 
+   line. then use above command.  now ls in [ec2-user@tomcat webapps]$ u see .war 
+   file (tesla.war) there.
+
 
 #Tomcat server configuration:
 find / -name server.xml context.xml
